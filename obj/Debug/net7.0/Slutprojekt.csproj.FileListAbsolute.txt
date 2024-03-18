@@ -1,0 +1,14 @@
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\bin\Debug\net7.0\Slutprojekt.exe
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\bin\Debug\net7.0\Slutprojekt.deps.json
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\bin\Debug\net7.0\Slutprojekt.runtimeconfig.json
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\bin\Debug\net7.0\Slutprojekt.dll
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\bin\Debug\net7.0\Slutprojekt.pdb
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.AssemblyInfoInputs.cache
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.AssemblyInfo.cs
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.csproj.CoreCompileInputs.cache
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.dll
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\refint\Slutprojekt.dll
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.pdb
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\Slutprojekt.genruntimeconfig.cache
+C:\Users\simon.hall\Documents\Prog\Prog 2\Slutprojekt\obj\Debug\net7.0\ref\Slutprojekt.dll
