@@ -4,20 +4,26 @@ class CombatHandler
 {
     float deltaTime, timeUntilNextUpdate, targetUpdateRate;
     bool stop = false;
-    int _targetUpdateRate = 10;
-    int framesElapsed = 0;
+    int targetFPS = 10;
+
+    Player player;
+    List<Enemy> enemies;
+
+    public CombatHandler(int targetUpdateRate, Player player, List<Enemy> enemies)
+    {
+        targetFPS = targetUpdateRate;
+        this.player = player;
+        this.enemies = enemies;
+    }
 
     public void Start()
     {
-        //mainThread = new Thread(Update);
-        targetUpdateRate = 1f / _targetUpdateRate * 1000;
+        targetUpdateRate = 1f / targetFPS * 1000;
         timeUntilNextUpdate = targetUpdateRate;
         Update();
     }
     private void Update()
     {
-        Stopwatch debugTimer = new();
-        debugTimer.Start();
         Stopwatch stopwatch = new();
         while(true)
         {
@@ -27,8 +33,6 @@ class CombatHandler
             if(!stop)
             {
                 NextStep();
-                framesElapsed += 1;
-                Console.WriteLine("This is frame nr: " + framesElapsed);
             }
 
             stopwatch.Stop();
@@ -40,22 +44,13 @@ class CombatHandler
 
             if(timeUntilNextUpdate >= 0)
             {
-                //await Task.Delay((int)timeUntilNextUpdate);
                 Thread.Sleep((int)timeUntilNextUpdate);
-            }
-            if(framesElapsed > 200)
-            {
-                debugTimer.Stop();
-                Console.WriteLine("Total time elapsed: " + debugTimer.ElapsedMilliseconds);
-                Console.WriteLine("Total frames: " + framesElapsed);
-                break;
             }
         }
     }
-
     private void NextStep()
     {
-
+        Console.WriteLine();
 
     }
 }

@@ -1,14 +1,20 @@
 class Enemy
 {
-    Item[] lootTable; // The sum of all items in the loot table must equal 100
-                      // The odds in the table are expressed in %
+    LootTable lootTable;
     int health, damage;
-    float attackSpeed, attackCooldown;
+    float attackSpeed, attackCooldown; // attackSpeed is given in attacks per second
+
+    public Enemy(int health, int damage, float attackSpeed, float attackCooldown)
+    {
+        lootTable = new LootTable();
+        this.health = health;
+        this.damage = damage;
+        this.attackSpeed = attackSpeed;
+        this.attackCooldown = attackCooldown;
+    }
 
     public void PerformActions()
     {
 
     }
-
-    
 }
