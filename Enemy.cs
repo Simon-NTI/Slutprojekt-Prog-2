@@ -1,20 +1,9 @@
-class Enemy
+class Enemy : Character
 {
     LootTable lootTable;
-    int health, damage;
-    float attackSpeed, attackCooldown; // attackSpeed is given in attacks per second
 
-    public Enemy(int health, int damage, float attackSpeed, float attackCooldown)
+    public Enemy(int health, int damage, int defense, float attackSpeed, int enemyLevel) : base(health, damage, defense, attackSpeed)
     {
-        lootTable = new LootTable();
-        this.health = health;
-        this.damage = damage;
-        this.attackSpeed = attackSpeed;
-        this.attackCooldown = attackCooldown;
-    }
-
-    public void PerformActions()
-    {
-
+        lootTable = new LootTable(enemyLevel);
     }
 }

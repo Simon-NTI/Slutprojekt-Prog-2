@@ -1,12 +1,13 @@
 public class  LootTable
 {
     Item[] lootTable;
-    float[] lootTableOdds;  // The odds in the table are expressed in %    
+    float[] lootTableOdds;  // The odds in the table are expressed as a fraction 
 
-    public LootTable(float[] lootTableOdds)
+    public LootTable(int enemyLevel)
     {
-        this.lootTable = GenerateLootTable();
-        this.lootTableOdds = lootTableOdds;
+        (Item[], float[]) items = GenerateLootTable(enemyLevel);
+        lootTable = items.Item1;
+        lootTableOdds = items.Item2;
     }
 
     // The sum of all items in the loot table must equal 100
