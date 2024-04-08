@@ -1,8 +1,13 @@
 
 class Player : Character
 {
-    public Player(int health, int damage, int defense, float attackSpeed) : base(health, damage, defense, attackSpeed)
+    public Player(int maxHealth, int damage, int defense, float attackSpeed) : base(maxHealth, damage, defense, attackSpeed)
     {
 
+    }
+
+    public override void OnDeath(Character opposingCharacter)
+    {
+        Console.WriteLine("Player is die :(");
     }
 }

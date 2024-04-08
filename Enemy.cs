@@ -6,4 +6,8 @@ class Enemy : Character
     {
         lootTable = new LootTable(enemyLevel);
     }
+    public override void OnDeath(Character opposingCharacter)
+    {
+        Console.WriteLine("Enemy is die :)");
+    }
 }
