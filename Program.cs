@@ -6,10 +6,11 @@ namespace Slutprojekt;
 
 class Program
 {
-    public static (int x, int y) screenSize = new(800, 1000);
+    public const int DEFAULT_FONT_SIZE = 45;
+    public static readonly (int x, int y) screenSize = new(800, 1000);
     static void Main(string[] args)
     {
-        Enemy enemy = new(10, 2, 0, 1, 1);
+        Enemy enemy = new(1);
         Player player = new(20, 4, 0, 1);
         CombatHandler combatHandler = new(player, enemy);
         combatHandler.Start();

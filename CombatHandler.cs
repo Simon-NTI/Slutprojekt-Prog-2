@@ -1,11 +1,12 @@
 using System.Diagnostics;
 using Raylib_cs;
+using Slutprojekt;
 
 class CombatHandler
 {
     Player player;
     Enemy enemy;
-    float recoveryPeriod = 3;
+    float recoveryPeriod = 2;
     public float recoveryRemaining = 0;
 
     public CombatHandler(Player player, Enemy enemy)
@@ -24,12 +25,12 @@ class CombatHandler
 
         if(recoveryRemaining > 0)
         {
-            player.Recover();
-            enemy.Recover();
-            recoveryRemaining -= Raylib.GetFrameTime();
+            WhileRecovering();
+            return;
         }
 
         enemy.PerformActions(player);
+        enemy.DrawInformation();
         if(player.IsDead())
         {
             player.OnDeath(enemy);
@@ -37,6 +38,30 @@ class CombatHandler
         }
 
         player.PerformActions(enemy);
+        player.DrawInformation();
         enemy.IsDead();
+    }
+
+    private void WhileRecovering()
+    {
+        Utils.DrawCenteredText(
+            "Player is recovering...",
+            Program.screenSize.x / 2, 100,
+            Program.DEFAULT_FONT_SIZE + 20,
+            Color.Green
+        );
+
+        player.Recover();
+        player.DrawInformation();
+
+        enemy.Recover();
+        enemy.DrawInformation();
+
+        recoveryRemaining -= Raylib.GetFrameTime();
+        if (recoveryRemaining <= 0)
+        {
+            enemy = new Enemy(1);
+        }
+        return;
     }
 }

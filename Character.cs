@@ -4,18 +4,12 @@ using Slutprojekt;
 abstract class Character
 {
     public int maxHealth, health, damage, defense;
-    public float attackCooldown, currentAttackCooldown, attackSpeed;
-    protected Character(int maxHealth, int damage, int defense, float attackSpeed)
-    {
-        this.maxHealth = maxHealth;
-        health = maxHealth;
-        this.damage = damage;
-        this.defense = defense;
-        this.attackSpeed = attackSpeed;
-        attackCooldown = 1f / attackSpeed;
-        currentAttackCooldown = 0;
-    }
 
+    // Cached values
+    protected int textYOffset;
+    protected string characterType;
+
+    public float attackSpeed, attackCooldown;
     public void PerformActions(Character opposingCharacter)
     {
         //Console.WriteLine();
@@ -27,16 +21,10 @@ abstract class Character
             return;
         }
 
-        //Type characterType = GetType();
-        int textYOffset = GetType().ToString().Equals("Player") ? 400 : 500;
-
-        string text = $"{GetType()} Health: {health}";
-        Utils.DrawCenteredText(text, Program.screenSize.x / 2, textYOffset, 30, Color.White);
-
-        currentAttackCooldown += Raylib.GetFrameTime();
-        if (currentAttackCooldown >= attackCooldown)
+        attackCooldown += Raylib.GetFrameTime();
+        if (attackCooldown >= attackSpeed)
         {
-            currentAttackCooldown -= attackCooldown;
+            attackCooldown -= attackSpeed;
             opposingCharacter.RecieveDamage(damage);
         }
     }
@@ -53,10 +41,37 @@ abstract class Character
     public void Recover()
     {
         //TODO instead of clamping the value to a minimum of 1, calculate the amount of health the character
-        //needs to recover during the recovery period, and then slowsly apply that change over time
+        //needs to recover during the recovery period, and then slowly apply that change over time
         //to make it smoother
 
-        health += Math.Clamp((int)(maxHealth / Raylib.GetFrameTime() / 2f), 1, 9999);
+        health += Math.Clamp((int)(maxHealth * Raylib.GetFrameTime() / 2f), 1, 9999);
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+    }
+
+    protected void RunOnConstruction()
+    {
+        characterType = GetType().ToString();
+        textYOffset = characterType.Equals("Player") ? 300 : 500;
+    }
+
+    public void DrawInformation()
+    {
+        Utils.DrawCenteredText(
+            characterType, 
+            (int)((float)Program.screenSize.x * (1/3)), Program.screenSize.y / 2, 
+            Program.DEFAULT_FONT_SIZE, 
+            Color.White
+        );
+
+            Utils.DrawCenteredText(
+            $"Health: {health}", 
+            (int)((float)Program.screenSize.x * (2/3)), textYOffset + Program.screenSize.y / 2, 
+            Program.DEFAULT_FONT_SIZE,
+            Color.White
+        );
     }
 
     abstract public void OnDeath(Character opposingCharacter);
