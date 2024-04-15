@@ -7,7 +7,7 @@ namespace Slutprojekt;
 class Program
 {
     public const int DEFAULT_FONT_SIZE = 45;
-    public static readonly (int x, int y) screenSize = new(800, 1000);
+    public static readonly (int x, int y) SCREEN_SIZE = new(800, 1000);
     static void Main(string[] args)
     {
         Enemy enemy = new(1);
@@ -16,7 +16,7 @@ class Program
         combatHandler.Start();
 
 
-        Raylib.InitWindow(screenSize.x, screenSize.y, "Raylib");
+        Raylib.InitWindow(SCREEN_SIZE.x, SCREEN_SIZE.y, "Raylib");
         Raylib.SetTargetFPS(60);
         
         while (!Raylib.WindowShouldClose())

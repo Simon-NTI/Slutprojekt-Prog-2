@@ -13,7 +13,7 @@ class Enemy : Character
         defense = (enemyLevel - 5) * 2;
         if (defense < 0) defense = 0;
 
-        attackSpeed = 2f - (float)(1 / Math.Ceiling((enemyLevel - 1d) * 0.2d));
+        attackSpeed = 3f - (float)(Math.Floor((enemyLevel - 1) * 0.2d) * 0.1d);
         if (attackSpeed < 0) attackSpeed = 0.1f;
     }
     public override void OnDeath(Character opposingCharacter)

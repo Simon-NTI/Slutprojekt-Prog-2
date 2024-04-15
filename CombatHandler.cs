@@ -6,7 +6,7 @@ class CombatHandler
 {
     Player player;
     Enemy enemy;
-    float recoveryPeriod = 2;
+    const float recoveryPeriod = 2;
     public float recoveryRemaining = 0;
 
     public CombatHandler(Player player, Enemy enemy)
@@ -35,18 +35,27 @@ class CombatHandler
         {
             player.OnDeath(enemy);
             recoveryRemaining = recoveryPeriod;
+            player.BeginRecovering(recoveryPeriod);
+            enemy.BeginRecovering(recoveryPeriod);
         }
 
         player.PerformActions(enemy);
         player.DrawInformation();
         enemy.IsDead();
+        if(enemy.IsDead())
+        {
+            enemy.OnDeath(player);
+            recoveryRemaining = recoveryPeriod;
+            player.BeginRecovering(recoveryPeriod);
+            enemy.BeginRecovering(recoveryPeriod);
+        }
     }
 
     private void WhileRecovering()
     {
         Utils.DrawCenteredText(
             "Player is recovering...",
-            Program.screenSize.x / 2, 100,
+            Program.SCREEN_SIZE.x / 2, 100,
             Program.DEFAULT_FONT_SIZE + 20,
             Color.Green
         );
