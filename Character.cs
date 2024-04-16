@@ -3,14 +3,13 @@ using Slutprojekt;
 
 abstract class Character
 {
-    public int maxHealth, health, damage, defense;
+    protected int maxHealth, health, damage, defense;
     private float healthRecoveryBuffer, healthRecoveryPerSecond;
 
 
-    // Cached values
     protected string characterName;
     (int x, int y) textOffset;
-    public float attackSpeed, attackCooldown;
+    protected float attackSpeed, attackCooldown;
     public void PerformActions(Character opposingCharacter)
     {
         //Console.WriteLine();
@@ -32,6 +31,7 @@ abstract class Character
     public void RecieveDamage(int damage)
     {
         health -= damage;
+        new FloatingText((textOffset.x + 200, textOffset.y), (textOffset.x + 200, textOffset.y - 150), 3, "-" + damage.ToString(), Color.Red);
     }
 
     public bool IsDead()
@@ -43,7 +43,7 @@ abstract class Character
     public void BeginRecovering(float recoveryPeriod)
     {
         healthRecoveryBuffer = 0;
-        healthRecoveryPerSecond = (maxHealth - health) / 2f * (float)Raylib.GetFrameTime();
+        healthRecoveryPerSecond = (maxHealth - health) / recoveryPeriod * (float)Raylib.GetFrameTime();
         health += 1;
     }
     public void Recover()

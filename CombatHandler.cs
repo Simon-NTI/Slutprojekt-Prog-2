@@ -21,14 +21,20 @@ class CombatHandler
     }
     public void NextStep()
     {
-        Console.Clear();
+        FloatingText.UpdateAllInstances();
 
         if(recoveryRemaining > 0)
         {
             WhileRecovering();
-            return;
         }
+        else
+        {
+            WhileCombat();
+        }
+    }
 
+    private void WhileCombat()
+    {
         enemy.PerformActions(player);
         enemy.DrawInformation();
         if(player.IsDead())
