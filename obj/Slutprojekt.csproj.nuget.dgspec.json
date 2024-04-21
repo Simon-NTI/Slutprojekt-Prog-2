@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\simon.hall\\Documents\\Prog\\Prog 2\\Slutprojekt\\Slutprojekt.csproj": {}
+    "C:\\Users\\simon\\Documents\\VSCode Projects\\Slutprojekt-Prog-2\\Slutprojekt.csproj": {}
   },
   "projects": {
-    "C:\\Users\\simon.hall\\Documents\\Prog\\Prog 2\\Slutprojekt\\Slutprojekt.csproj": {
+    "C:\\Users\\simon\\Documents\\VSCode Projects\\Slutprojekt-Prog-2\\Slutprojekt.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\simon.hall\\Documents\\Prog\\Prog 2\\Slutprojekt\\Slutprojekt.csproj",
+        "projectUniqueName": "C:\\Users\\simon\\Documents\\VSCode Projects\\Slutprojekt-Prog-2\\Slutprojekt.csproj",
         "projectName": "Slutprojekt",
-        "projectPath": "C:\\Users\\simon.hall\\Documents\\Prog\\Prog 2\\Slutprojekt\\Slutprojekt.csproj",
-        "packagesPath": "C:\\Users\\simon.hall\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\simon.hall\\Documents\\Prog\\Prog 2\\Slutprojekt\\obj\\",
+        "projectPath": "C:\\Users\\simon\\Documents\\VSCode Projects\\Slutprojekt-Prog-2\\Slutprojekt.csproj",
+        "packagesPath": "C:\\Users\\simon\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\simon\\Documents\\VSCode Projects\\Slutprojekt-Prog-2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\simon.hall\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\simon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -59,7 +61,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.408\\RuntimeIdentifierGraph.json"
         }
       }
     }

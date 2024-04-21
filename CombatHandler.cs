@@ -4,6 +4,7 @@ using Slutprojekt;
 
 class CombatHandler
 {
+    int stage = 1;
     Player player;
     Enemy enemy;
     const float recoveryPeriod = 2;
@@ -22,6 +23,8 @@ class CombatHandler
     public void NextStep()
     {
         FloatingText.UpdateAllInstances();
+        DrawInformation();
+        player.inventory.DrawInformation();
 
         if(recoveryRemaining > 0)
         {
@@ -75,8 +78,13 @@ class CombatHandler
         recoveryRemaining -= Raylib.GetFrameTime();
         if (recoveryRemaining <= 0)
         {
-            enemy = new Enemy(1);
+            enemy = new Enemy(stage);
         }
         return;
+    }
+
+    private void DrawInformation()
+    {
+        Raylib.DrawText("Stage: " + stage, 50, 50, Program.DEFAULT_FONT_SIZE - 10, Color.White);
     }
 }

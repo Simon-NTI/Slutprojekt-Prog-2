@@ -23,11 +23,6 @@ class FloatingText
         this.targetPosition = targetPosition;
         this.content = content;
 
-        Console.WriteLine(
-            $"Initial position: {initialPosition}\n"
-        + $"Target position {targetPosition}\n"
-        + $"Change per second {changePerSecond}");
-
         floatingTexts.Add(this);
     }
 
@@ -51,7 +46,7 @@ class FloatingText
         timeAlive += Raylib.GetFrameTime();
 
         currentPosition.x += changePerSecond.x * Raylib.GetFrameTime();
-        currentPosition.y += changePerSecond.y *  Raylib.GetFrameTime();
+        currentPosition.y += changePerSecond.y * Raylib.GetFrameTime();
 
         Raylib.DrawText(content, (int)currentPosition.x, (int)currentPosition.y, Program.DEFAULT_FONT_SIZE, color);
         return false;
