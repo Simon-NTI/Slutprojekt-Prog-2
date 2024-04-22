@@ -18,7 +18,7 @@ class CombatHandler
 
     public void Start()
     {
-
+        player.inventory.GiveInitialItems();
     }
     public void NextStep()
     {

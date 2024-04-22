@@ -15,9 +15,9 @@ public class Weapon : Item
 
     string name;
     int damage;
-    int attackSpeed; // This is given in attacks per seconds
+    float attackSpeed; // Attack cooldown
 
-    public Weapon(string name, int damage, int attackSpeed)
+    public Weapon(string name, int damage, float attackSpeed)
     {
         this.name = GenerateName();
         this.damage = damage;
