@@ -48,7 +48,7 @@ class FloatingText
         currentPosition.x += changePerSecond.x * Raylib.GetFrameTime();
         currentPosition.y += changePerSecond.y * Raylib.GetFrameTime();
 
-        Raylib.DrawText(content, (int)currentPosition.x, (int)currentPosition.y, Program.DEFAULT_FONT_SIZE, color);
+        Raylib.DrawText(content, (int)currentPosition.x, (int)currentPosition.y, Constants.DEFAULT_FONT_SIZE, color);
         return false;
     }
 }

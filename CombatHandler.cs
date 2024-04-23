@@ -64,8 +64,8 @@ class CombatHandler
     {
         Utils.DrawCenteredText(
             "Player is recovering...",
-            Program.SCREEN_SIZE.x / 2, 100,
-            Program.DEFAULT_FONT_SIZE + 20,
+            Constants.SCREEN_SIZE.X / 2, 100,
+            Constants.DEFAULT_FONT_SIZE + 20,
             Color.Green
         );
 
@@ -85,6 +85,6 @@ class CombatHandler
 
     private void DrawInformation()
     {
-        Raylib.DrawText("Stage: " + stage, 50, 50, Program.DEFAULT_FONT_SIZE - 10, Color.White);
+        Raylib.DrawText("Stage: " + stage, 50, 50, Constants.DEFAULT_FONT_SIZE - 10, Color.White);
     }
 }

@@ -3,17 +3,19 @@ using System.Reflection.Metadata;
 using Raylib_cs;
 using Slutprojekt;
 
-sealed class Inventory
+class Inventory
 {
+    class INVENTORY_OFFSET
+    {
+        public const int X = 800;
+        public const int Y = 800;
+    }
+
+    private (Item? item, (int x, int y) position) heldItem;
+    private static readonly Rectangle[] ITEM_POSITIONS = CalculateItemPositions();
     private (Weapon weapon, Necklace necklace, Armor armor) equippedItems;
-    private bool isHoldingItem = false;
-    private Item heldItem;
-
-
-    private (int x, int y) INVENTORY_OFFSET = (Program.SCREEN_SIZE.x - 800, 200);
-    private const int NEW_ROW_THRESHOLD = (int)Math.Floor((Program.SCREEN_SIZE.x - INVENTORY_OFFSET.x - 100) / (float)ITEM_SIZE);
     private const int ITEM_SIZE = 100;
-
+    private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor((Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100) / (float)ITEM_SIZE);
     List<Item> items = new List<Item>();
 
     public void DrawInformation()
@@ -23,23 +25,46 @@ sealed class Inventory
         CheckGrab();
     }
 
-    private void CheckGrab()
+    private static Rectangle[] CalculateItemPositions()
+    {
+        Rectangle[] itemRectangles = new Rectangle[NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD];
+        for (int i = 0; i < itemRectangles.Length; i++)
+        {
+            itemRectangles[i] = new(
+                INVENTORY_OFFSET.X + ITEM_SIZE * i - ITEM_SIZE * NEW_ROW_THRESHOLD * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
+                INVENTORY_OFFSET.Y + ITEM_SIZE * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
+                ITEM_SIZE,
+                ITEM_SIZE
+            );
+        }
+        return itemRectangles;
+    }
+
+    private Item? CheckGrab()
     {
         if(Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
             Vector2 mousePosition = Raylib.GetMousePosition();
             for (int i = 0; i < items.Count; i++)
             {
-                Raylib.CheckCollisionPointRec
+                if(Raylib.CheckCollisionPointRec(mousePosition, ITEM_POSITIONS[i]))
+                {
+                    return items[i];
+                }
             }
         }
+        return null;
     }
 
     private void WhileGrabbing()
     {
-        if(isHoldingItem)
+        if(heldItem.item != null && Raylib.IsMouseButtonDown(MouseButton.Left))
         {
-
+            heldItem.position = ((int)Raylib.GetMousePosition().X, (int)Raylib.GetMousePosition().Y);
+        }
+        else
+        {
+            return;
         }
     }
 
@@ -73,29 +98,26 @@ sealed class Inventory
     private void DrawInventory()
     {
         Raylib.DrawRectangle(
-            INVENTORY_OFFSET.x, 
-            INVENTORY_OFFSET.y, 
-            Program.SCREEN_SIZE.x - INVENTORY_OFFSET.x - 100, 
-            Program.SCREEN_SIZE.y - 300, 
+            INVENTORY_OFFSET.X, 
+            INVENTORY_OFFSET.Y, 
+            Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100, 
+            Constants.SCREEN_SIZE.Y - 300, 
             Color.DarkBlue
         );
 
         for (int i = items.Count - 1; i >= 0 ; i--)
         {
             //TODO draw an image for each item in items
-            Raylib.DrawRectangle(
-                INVENTORY_OFFSET.x + ITEM_SIZE * i - ITEM_SIZE * NEW_ROW_THRESHOLD * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
-                INVENTORY_OFFSET.y + ITEM_SIZE * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
-                ITEM_SIZE, 
-                ITEM_SIZE,
+            Raylib.DrawRectangleRec(
+                ITEM_POSITIONS[i],
                 Color.Beige
             );
 
             Utils.DrawCenteredText(
                 i.ToString(),
-                Program.DEFAULT_FONT_SIZE / 2 + INVENTORY_OFFSET.x + ITEM_SIZE * i - ITEM_SIZE * NEW_ROW_THRESHOLD * (int)Math.Floor(i * (1f / newRowThreshold)),
-                Program.DEFAULT_FONT_SIZE / 2 + INVENTORY_OFFSET.y + ITEM_SIZE * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
-                Program.DEFAULT_FONT_SIZE,
+                Constants.DEFAULT_FONT_SIZE / 2 + (int)ITEM_POSITIONS[i].X,
+                Constants.DEFAULT_FONT_SIZE / 2 + (int)ITEM_POSITIONS[i].Y,
+                Constants.DEFAULT_FONT_SIZE,
                 Color.White
             );
         }

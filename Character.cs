@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Raylib_cs;
 using Slutprojekt;
 
@@ -63,7 +64,7 @@ abstract class Character
         characterName = "- " + GetType().ToString() + " -";
 
         textOffset.x = 100;
-        int yOffset = (int)((Program.SCREEN_SIZE.y - 400) / 3f); 
+        int yOffset = (int)((Constants.SCREEN_SIZE.Y - 400) / 3f); 
         textOffset.y = GetType().ToString().Equals("Player") ? yOffset : 2 * yOffset + 200;
     }
 
@@ -73,7 +74,7 @@ abstract class Character
             characterName,
             textOffset.x,
             textOffset.y,
-            Program.DEFAULT_FONT_SIZE,
+            Constants.DEFAULT_FONT_SIZE,
             Color.White
         );
 
@@ -81,7 +82,7 @@ abstract class Character
             $"Health: {health}", 
             textOffset.x, 
             textOffset.y + 60, 
-            Program.DEFAULT_FONT_SIZE,
+            Constants.DEFAULT_FONT_SIZE,
             Color.White
         );
     }
