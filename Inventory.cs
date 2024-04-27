@@ -8,21 +8,21 @@ class Inventory
     class INVENTORY_OFFSET
     {
         public const int X = 800;
-        public const int Y = 800;
+        public const int Y = 200;
     }
 
     private (Item? item, (int x, int y) position) heldItem;
+    private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor((Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100) / (float)ITEM_SIZE);
     private static readonly Rectangle[] ITEM_POSITIONS = CalculateItemPositions();
     private (Weapon weapon, Necklace necklace, Armor armor) equippedItems;
     private const int ITEM_SIZE = 100;
-    private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor((Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100) / (float)ITEM_SIZE);
-    List<Item> items = new List<Item>();
+    public readonly List<Item> items = new List<Item>();
 
     public void DrawInformation()
     {
+        CheckGrab();
         DrawEquippedItems();
         DrawInventory();
-        CheckGrab();
     }
 
     private static Rectangle[] CalculateItemPositions()
@@ -40,7 +40,7 @@ class Inventory
         return itemRectangles;
     }
 
-    private Item? CheckGrab()
+    private void CheckGrab()
     {
         if(Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
@@ -49,21 +49,20 @@ class Inventory
             {
                 if(Raylib.CheckCollisionPointRec(mousePosition, ITEM_POSITIONS[i]))
                 {
-                    return items[i];
+                    heldItem.item = items[i];
+                    heldItem.position = ((int)Raylib.GetMousePosition().X, (int)Raylib.GetMousePosition().Y);
+                    return;
                 }
             }
         }
-        return null;
-    }
-
-    private void WhileGrabbing()
-    {
-        if(heldItem.item != null && Raylib.IsMouseButtonDown(MouseButton.Left))
+        else if(heldItem.item != null && Raylib.IsMouseButtonDown(MouseButton.Left))
         {
             heldItem.position = ((int)Raylib.GetMousePosition().X, (int)Raylib.GetMousePosition().Y);
+            return;
         }
         else
         {
+            heldItem.item = null;
             return;
         }
     }
@@ -119,6 +118,18 @@ class Inventory
                 Constants.DEFAULT_FONT_SIZE / 2 + (int)ITEM_POSITIONS[i].Y,
                 Constants.DEFAULT_FONT_SIZE,
                 Color.White
+            );
+        }
+
+        //Draw held item
+        if(heldItem.item is not null)
+        {
+            Raylib.DrawRectangle(
+                heldItem.position.x - ITEM_SIZE / 2,
+                heldItem.position.y - ITEM_SIZE / 2,
+                ITEM_SIZE,
+                ITEM_SIZE,
+                Color.SkyBlue
             );
         }
     }

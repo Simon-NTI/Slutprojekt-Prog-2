@@ -6,11 +6,11 @@ abstract class Character
 {
     protected int maxHealth, health, damage, defense;
     private float healthRecoveryBuffer, healthRecoveryPerSecond;
-
-
     protected string characterName;
     (int x, int y) textOffset;
     protected float attackSpeed, attackCooldown;
+
+    private const int HEALTHBAR_LENGTH = 300;
     public void PerformActions(Character opposingCharacter)
     {
         //Console.WriteLine();
@@ -37,7 +37,7 @@ abstract class Character
 
     public bool IsDead()
     {
-        return health <= 0 ? true : false;
+        return health <= 0;
     }
 
 
@@ -70,6 +70,7 @@ abstract class Character
 
     public void DrawInformation()
     {
+        //Draw the name of the character
         Raylib.DrawText(
             characterName,
             textOffset.x,
@@ -78,13 +79,33 @@ abstract class Character
             Color.White
         );
 
-        Raylib.DrawText(
-            $"Health: {health}", 
-            textOffset.x, 
-            textOffset.y + 60, 
-            Constants.DEFAULT_FONT_SIZE,
-            Color.White
-        );
+        // Draw healthbar
+        {
+            Raylib.DrawRectangle(
+                textOffset.x - (HEALTHBAR_LENGTH - Raylib.MeasureText(characterName, Constants.DEFAULT_FONT_SIZE)) / 2,
+                textOffset.y - 60,
+                HEALTHBAR_LENGTH,
+                50,
+                Color.Red
+            );
+
+            Raylib.DrawRectangle(
+                textOffset.x - (HEALTHBAR_LENGTH - Raylib.MeasureText(characterName, Constants.DEFAULT_FONT_SIZE)) / 2,
+                textOffset.y - 60,
+                (int)((float)health / maxHealth * HEALTHBAR_LENGTH),
+                50,
+                Color.Green
+            );
+            
+            // Draw the amount of health the character has
+            Raylib.DrawText(
+                $"Health: {health}", 
+                textOffset.x, 
+                textOffset.y - 60, 
+                Constants.DEFAULT_FONT_SIZE,
+                Color.Black
+            );
+        }
     }
 
     abstract public void OnDeath(Character opposingCharacter);
