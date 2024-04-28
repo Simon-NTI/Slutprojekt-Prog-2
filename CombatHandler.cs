@@ -4,6 +4,12 @@ using Slutprojekt;
 
 class CombatHandler
 {
+    //TODO the player should be given instructions on how to play
+    //TODO items should have an effect
+    //TODO ability to move between stages
+    //TODO enemies drop items based on their loot table
+    //TODO move "Player Is Recovering" text somewhere else, make it smaller and don't specify who is recovering
+    //TODO add a visual indicator for attack cooldowns
     int stage = 1;
     Player player;
     Enemy enemy;
