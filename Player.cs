@@ -1,7 +1,7 @@
 
 class Player : Character
 {
-    public Inventory inventory { get; }
+    public Inventory Inventory { get; }
     public Player(int maxHealth, int damage, int defense, float attackSpeed)
     {
         RunOnConstruction();
@@ -11,7 +11,7 @@ class Player : Character
         this.defense = defense;
         this.attackSpeed = attackSpeed;
         attackCooldown = 0;
-        inventory = new();
+        Inventory = new();
     }
 
     public override void OnDeath(Character opposingCharacter)

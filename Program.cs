@@ -7,6 +7,7 @@ class Program
 {
     static void Main(string[] args)
     {
+        Raylib.InitWindow(Constants.SCREEN_SIZE.X, Constants.SCREEN_SIZE.Y, "Raylib");
         CombatHandler combatHandler = new(
             new(20, 4, 0, 1),
             new(1)
@@ -14,7 +15,6 @@ class Program
 
         combatHandler.Start();
 
-        Raylib.InitWindow(Constants.SCREEN_SIZE.X, Constants.SCREEN_SIZE.Y, "Raylib");
         Raylib.SetTargetFPS(60);
         
         while (!Raylib.WindowShouldClose())

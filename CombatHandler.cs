@@ -18,13 +18,13 @@ class CombatHandler
 
     public void Start()
     {
-        player.inventory.GiveInitialItems();
+        player.Inventory.GiveInitialItems();
     }
     public void NextStep()
     {
         FloatingText.UpdateAllInstances();
         DrawInformation();
-        player.inventory.DrawInformation();
+        player.Inventory.DrawInformation();
 
         if(recoveryRemaining > 0)
         {

@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Numerics;
 using System.Reflection.Metadata;
 using Raylib_cs;
@@ -10,14 +11,46 @@ class Inventory
         public const int X = 800;
         public const int Y = 200;
     }
-
-    private (Item? item, (int x, int y) position) heldItem;
+    private (Item? item, (int x, int y) position, int? listIndex) heldItem;
     private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor((Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100) / (float)ITEM_SIZE);
     private static readonly Rectangle[] ITEM_POSITIONS = CalculateItemPositions();
-    private (Weapon weapon, Necklace necklace, Armor armor) equippedItems;
-    private const int ITEM_SIZE = 100;
-    public readonly List<Item> items = new List<Item>();
 
+    //ItemGraphics are preloaded textures
+    private static readonly Texture2D[] itemGraphics = new Texture2D[4]
+    {
+        Raylib.LoadTexture("Assets/Armor.png"),
+        Raylib.LoadTexture("Assets/Necklace.png"),
+        Raylib.LoadTexture("Assets/Weapon.png"),
+        Raylib.LoadTexture("Assets/Unknown.png")
+    };
+
+    private enum ItemGraphics
+    {
+        Armor,
+        Necklace,
+        Weapon,
+        Unknown
+    }
+    private readonly Item?[] equippedItems = new Item?[3]
+    {
+        null, null, null
+    };
+    private readonly Type[] equippedItemsOrder = new Type[3]
+    {
+        typeof(Necklace), typeof(Weapon), typeof(Armor)
+    };
+    private readonly Rectangle[] equippedItemPositions;
+    //private (Weapon weapon, Necklace necklace, Armor armor) equippedItems;
+    private const int ITEM_SIZE = 100;
+    public readonly List<Item> items = new();
+    
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public Inventory()
+    {
+        equippedItemPositions = CalculateEquippedItemPositions();
+    }
     public void DrawInformation()
     {
         CheckGrab();
@@ -25,23 +58,39 @@ class Inventory
         DrawInventory();
     }
 
+    private Rectangle[] CalculateEquippedItemPositions()
+    {
+        Rectangle[] itemPositions = new Rectangle[equippedItems.Length];
+        for (int i = 0; i < equippedItems.Length; i++)
+        {
+            itemPositions[i] = new(
+                INVENTORY_OFFSET.X + ITEM_SIZE * 1.5f * i,
+                INVENTORY_OFFSET.Y - ITEM_SIZE * 1.5f,
+                ITEM_SIZE,
+                ITEM_SIZE
+            );
+        }
+        return itemPositions;
+    }
     private static Rectangle[] CalculateItemPositions()
     {
-        Rectangle[] itemRectangles = new Rectangle[NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD];
-        for (int i = 0; i < itemRectangles.Length; i++)
+        Rectangle[] itemPositions = new Rectangle[NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD];
+
+        for (int i = 0; i < itemPositions.Length; i++)
         {
-            itemRectangles[i] = new(
+            itemPositions[i] = new(
                 INVENTORY_OFFSET.X + ITEM_SIZE * i - ITEM_SIZE * NEW_ROW_THRESHOLD * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
                 INVENTORY_OFFSET.Y + ITEM_SIZE * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
                 ITEM_SIZE,
                 ITEM_SIZE
             );
         }
-        return itemRectangles;
+        return itemPositions;
     }
 
     private void CheckGrab()
     {
+        //Check if the player has pressed left mouse on an item
         if(Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
             Vector2 mousePosition = Raylib.GetMousePosition();
@@ -50,19 +99,45 @@ class Inventory
                 if(Raylib.CheckCollisionPointRec(mousePosition, ITEM_POSITIONS[i]))
                 {
                     heldItem.item = items[i];
+                    heldItem.listIndex = i;
                     heldItem.position = ((int)Raylib.GetMousePosition().X, (int)Raylib.GetMousePosition().Y);
                     return;
                 }
             }
         }
-        else if(heldItem.item != null && Raylib.IsMouseButtonDown(MouseButton.Left))
+        //Update the position of the players held item if they are currently holding left mouse
+        else if(heldItem.item is not null && Raylib.IsMouseButtonDown(MouseButton.Left))
         {
             heldItem.position = ((int)Raylib.GetMousePosition().X, (int)Raylib.GetMousePosition().Y);
             return;
         }
+        //Check if the player has released the held item,
+        //then equip it if it's aligned with a tile in the equipped item grid and has a matching type
+        else if(heldItem.item != null && Raylib.IsMouseButtonReleased(MouseButton.Left) && heldItem.listIndex != null)
+        {
+            for (int i = 0; i < equippedItemPositions.Length; i++)
+            {
+                if(Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), equippedItemPositions[i])
+                    && equippedItemsOrder[i] == heldItem.item.GetType())
+                {
+                    if(equippedItems[i] is not null)
+                    {
+                        items.Add(equippedItems[i]);
+                    }
+
+                    equippedItems[i] = heldItem.item;
+                    items.RemoveAt((int)heldItem.listIndex);
+                    heldItem.item = null;
+                    heldItem.listIndex = null;
+                    return;
+                }
+            }
+        }
+        //The player did not perform any actions with the left mouse button
         else
         {
             heldItem.item = null;
+            heldItem.listIndex = null;
             return;
         }
     }
@@ -86,6 +161,15 @@ class Inventory
                     items.Add(new Weapon("Jeff", 2, 0.5f));
                     break;
             }
+
+            if(Enum.TryParse(typeof(ItemGraphics), items[i].GetType().ToString(), true, out object? result))
+            {
+                items[i].texture = itemGraphics[(int)result];
+            }
+            else
+            {
+                items[i].texture = itemGraphics[(int)ItemGraphics.Unknown];
+            }
         }
     }
 
@@ -96,6 +180,7 @@ class Inventory
 
     private void DrawInventory()
     {
+        //Inventory background
         Raylib.DrawRectangle(
             INVENTORY_OFFSET.X, 
             INVENTORY_OFFSET.Y, 
@@ -104,24 +189,38 @@ class Inventory
             Color.DarkBlue
         );
 
+        //Inventory items
         for (int i = items.Count - 1; i >= 0 ; i--)
         {
-            //TODO draw an image for each item in items
+            //Item background
             Raylib.DrawRectangleRec(
                 ITEM_POSITIONS[i],
                 Color.Beige
             );
 
-            Utils.DrawCenteredText(
-                i.ToString(),
-                Constants.DEFAULT_FONT_SIZE / 2 + (int)ITEM_POSITIONS[i].X,
-                Constants.DEFAULT_FONT_SIZE / 2 + (int)ITEM_POSITIONS[i].Y,
-                Constants.DEFAULT_FONT_SIZE,
+            //Item icon
+            Raylib.DrawTexture(
+                items[i].texture,
+                (int)ITEM_POSITIONS[i].X + 34,
+                (int)ITEM_POSITIONS[i].Y + 34,
                 Color.White
             );
         }
 
-        //Draw held item
+        //Equipped items
+        for (int i = 0; i < equippedItemPositions.Length; i++)
+        {
+            Raylib.DrawRectangleRec(equippedItemPositions[i], Color.DarkPurple);
+
+            Raylib.DrawTexture(
+                equippedItems[i] is not null ? equippedItems[i].texture : itemGraphics[(int)ItemGraphics.Unknown],
+                (int)equippedItemPositions[i].X + 34,
+                (int)equippedItemPositions[i].Y + 34,
+                Color.White
+            );
+        }
+
+        //Held item
         if(heldItem.item is not null)
         {
             Raylib.DrawRectangle(
@@ -130,6 +229,13 @@ class Inventory
                 ITEM_SIZE,
                 ITEM_SIZE,
                 Color.SkyBlue
+            );
+
+            Raylib.DrawTexture(
+                heldItem.item.texture,
+                heldItem.position.x - ITEM_SIZE / 2 + 34,
+                heldItem.position.y - ITEM_SIZE / 2 + 34,
+                Color.White
             );
         }
     }
