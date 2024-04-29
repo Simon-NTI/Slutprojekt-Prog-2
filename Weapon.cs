@@ -1,10 +1,8 @@
 public class Weapon : Item
-{    int damage;
-    float attackSpeed; // Attack cooldown
-
-    public Weapon(int damage, float attackSpeed)
+{
+    public Weapon(int rarity) : base(rarity)
     {
-        this.damage = damage;
-        this.attackSpeed = attackSpeed;
+        Damage = rarity * 2;
+        AttackSpeed = rarity * 20;
     }
 }

@@ -13,9 +13,6 @@ abstract class Character
     private const int HEALTHBAR_LENGTH = 300;
     public void PerformActions(Character opposingCharacter)
     {
-        //Console.WriteLine();
-        //Console.WriteLine($"Deltatime: {Raylib.GetFrameTime()}");
-
         if(health <= 0)
         {
             OnDeath(opposingCharacter);
@@ -46,6 +43,7 @@ abstract class Character
         healthRecoveryBuffer = 0;
         healthRecoveryPerSecond = (maxHealth - health) / recoveryPeriod * (float)Raylib.GetFrameTime();
         health += 1;
+        attackCooldown = 0;
     }
     public void Recover()
     {
@@ -64,7 +62,7 @@ abstract class Character
         characterName = "- " + GetType().ToString() + " -";
 
         textOffset.x = 100;
-        int yOffset = (int)((Constants.SCREEN_SIZE.Y - 400) / 3f); 
+        int yOffset = (int)((Constants.SCREEN_SIZE.Y - 250) / 3f); 
         textOffset.y = GetType().ToString().Equals("Player") ? yOffset : 2 * yOffset + 200;
     }
 
@@ -79,8 +77,9 @@ abstract class Character
             Color.White
         );
 
-        // Draw healthbar
+        //Draw healthbar
         {
+            //Background
             Raylib.DrawRectangle(
                 textOffset.x - (HEALTHBAR_LENGTH - Raylib.MeasureText(characterName, Constants.DEFAULT_FONT_SIZE)) / 2,
                 textOffset.y - 60,
@@ -89,6 +88,7 @@ abstract class Character
                 Color.Red
             );
 
+            //Foreground
             Raylib.DrawRectangle(
                 textOffset.x - (HEALTHBAR_LENGTH - Raylib.MeasureText(characterName, Constants.DEFAULT_FONT_SIZE)) / 2,
                 textOffset.y - 60,
@@ -97,11 +97,41 @@ abstract class Character
                 Color.Green
             );
             
-            // Draw the amount of health the character has
+            //Text
             Raylib.DrawText(
                 $"Health: {health}", 
                 textOffset.x, 
                 textOffset.y - 60, 
+                Constants.DEFAULT_FONT_SIZE,
+                Color.Black
+            );
+        }
+
+        //Draw visual indicator for attack cooldown
+        {
+            //Background
+            Raylib.DrawRectangle(
+                textOffset.x - (HEALTHBAR_LENGTH - Raylib.MeasureText(characterName, Constants.DEFAULT_FONT_SIZE)) / 2,
+                textOffset.y - 135,
+                HEALTHBAR_LENGTH,
+                50,
+                Color.Red
+            );
+
+            //Foreground
+            Raylib.DrawRectangle(
+                textOffset.x - (HEALTHBAR_LENGTH - Raylib.MeasureText(characterName, Constants.DEFAULT_FONT_SIZE)) / 2,
+                textOffset.y - 135,
+                (int)(attackCooldown / attackSpeed * HEALTHBAR_LENGTH),
+                50,
+                Color.SkyBlue
+            );
+            
+            //Text
+            Raylib.DrawText(
+                $"{Math.Round(attackSpeed - attackCooldown, 2)}", 
+                textOffset.x + HEALTHBAR_LENGTH / 2 - 80, 
+                textOffset.y - 135, 
                 Constants.DEFAULT_FONT_SIZE,
                 Color.Black
             );

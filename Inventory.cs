@@ -6,44 +6,30 @@ using Slutprojekt;
 
 class Inventory
 {
-    class INVENTORY_OFFSET
+    class INVENTORY_SIZE
     {
-        public const int X = 800;
-        public const int Y = 200;
+        public class OFFSET
+        {
+            public const int X = 800;
+            public const int Y = 200;
+        }
+
+        public const int WIDTH = Constants.SCREEN_SIZE.X - OFFSET.X - 50;
+        public const int HEIGHT = Constants.SCREEN_SIZE.Y - OFFSET.Y - 200;
     }
     private (Item? item, (int x, int y) position, int? listIndex) heldItem;
-    private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor((Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100) / (float)ITEM_SIZE);
-    private static readonly Rectangle[] INVENTORY_ITEM_TILES = CalculateItemPositions();
-
-    //ItemGraphics are preloaded textures
-    private static readonly Texture2D[] itemGraphics = new Texture2D[4]
-    {
-        Raylib.LoadTexture("Assets/Armor.png"),
-        Raylib.LoadTexture("Assets/Necklace.png"),
-        Raylib.LoadTexture("Assets/Weapon.png"),
-        Raylib.LoadTexture("Assets/Unknown.png")
-    };
+    private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor(INVENTORY_SIZE.WIDTH / (float)ITEM_SIZE);
+    private static readonly int MAX_ITEM_COUNT = NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD;
+    private static readonly Rectangle[] INVENTORY_ITEM_TILES = CalculateItemTiles();
 
     private static readonly Texture2D deleteItemTexture = Raylib.LoadTexture("Assets/Delete.png");
     private static readonly int textureOffset = (ITEM_SIZE - deleteItemTexture.Height) / 2;
-
-    private enum ItemGraphics
-    {
-        Armor,
-        Necklace,
-        Weapon,
-        Unknown
-    }
-    private readonly Item?[] equippedItems = new Item?[3]
-    {
-        null, null, null
-    };
+    private readonly Item[] equippedItems = new Item[3];
     private readonly Type[] equippedItemsOrder = new Type[3]
     {
         typeof(Necklace), typeof(Weapon), typeof(Armor)
     };
     private readonly Rectangle[] equippedItemTiles;
-    //private (Weapon weapon, Necklace necklace, Armor armor) equippedItems;
     private const int ITEM_SIZE = 100;
     public readonly List<Item> items = new();
 
@@ -76,23 +62,23 @@ class Inventory
         for (int i = 0; i < equippedItems.Length; i++)
         {
             itemPositions[i] = new(
-                INVENTORY_OFFSET.X + ITEM_SIZE * 1.5f * i,
-                INVENTORY_OFFSET.Y - ITEM_SIZE * 1.5f,
+                INVENTORY_SIZE.OFFSET.X + ITEM_SIZE * 1.5f * i,
+                INVENTORY_SIZE.OFFSET.Y - ITEM_SIZE * 1.5f,
                 ITEM_SIZE,
                 ITEM_SIZE
             );
         }
         return itemPositions;
     }
-    private static Rectangle[] CalculateItemPositions()
+    private static Rectangle[] CalculateItemTiles()
     {
         Rectangle[] itemPositions = new Rectangle[NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD];
 
         for (int i = 0; i < itemPositions.Length; i++)
         {
             itemPositions[i] = new(
-                INVENTORY_OFFSET.X + ITEM_SIZE * i - ITEM_SIZE * NEW_ROW_THRESHOLD * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
-                INVENTORY_OFFSET.Y + ITEM_SIZE * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
+                INVENTORY_SIZE.OFFSET.X + ITEM_SIZE * i - ITEM_SIZE * NEW_ROW_THRESHOLD * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
+                INVENTORY_SIZE.OFFSET.Y + ITEM_SIZE * (int)Math.Floor(i * (1f / NEW_ROW_THRESHOLD)),
                 ITEM_SIZE,
                 ITEM_SIZE
             );
@@ -171,31 +157,16 @@ class Inventory
 
     public void GiveInitialItems()
     {
-        Random generator = new Random();
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < equippedItems.Length; i++)
         {
-            switch (generator.Next(3))
+            Item? item = (Item?)Activator.CreateInstance(equippedItemsOrder[i], new object[] { 0 });
+            if(item is null)
             {
-                case 0:
-                    items.Add(new Armor());
-                    break;
-
-                case 1:
-                    items.Add(new Necklace());
-                    break;
-
-                case 2:
-                    items.Add(new Weapon(2, 0.5f));
-                    break;
-            }
-
-            if (Enum.TryParse(typeof(ItemGraphics), items[i].GetType().ToString(), true, out object? result))
-            {
-                items[i].texture = itemGraphics[(int)result];
+                throw new Exception("Item was null");
             }
             else
             {
-                items[i].texture = itemGraphics[(int)ItemGraphics.Unknown];
+                equippedItems[i] = item;
             }
         }
     }
@@ -205,14 +176,26 @@ class Inventory
 
     }
 
+    public void AddItem(Item item)
+    {
+        if(items.Count >= MAX_ITEM_COUNT)
+        {
+            return;
+        }
+        else
+        {
+            items.Add(item);
+            return;
+        }
+    }
     private void DrawInventory()
     {
         //Inventory background
         Raylib.DrawRectangle(
-            INVENTORY_OFFSET.X,
-            INVENTORY_OFFSET.Y,
-            Constants.SCREEN_SIZE.X - INVENTORY_OFFSET.X - 100,
-            Constants.SCREEN_SIZE.Y - 300,
+            INVENTORY_SIZE.OFFSET.X,
+            INVENTORY_SIZE.OFFSET.Y,
+            INVENTORY_SIZE.WIDTH,
+            INVENTORY_SIZE.HEIGHT,
             Color.DarkBlue
         );
 
@@ -245,7 +228,7 @@ class Inventory
 
             //Item icon
             Raylib.DrawTexture(
-                equippedItems[i] is not null ? equippedItems[i].texture : itemGraphics[(int)ItemGraphics.Unknown],
+                equippedItems[i] is not null ? equippedItems[i].texture : Item.itemTextures[(int)Item.ItemTextures.Unknown],
                 (int)equippedItemTiles[i].X + textureOffset,
                 (int)equippedItemTiles[i].Y + textureOffset,
                 Color.White

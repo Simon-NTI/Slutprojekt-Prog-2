@@ -68,7 +68,7 @@ class CombatHandler
 
     private void WhileRecovering()
     {
-        Utils.DrawCenteredText(
+        IUtils.DrawCenteredText(
             "Player is recovering...",
             Constants.SCREEN_SIZE.X / 2, 100,
             Constants.DEFAULT_FONT_SIZE + 20,

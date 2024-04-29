@@ -1,15 +1,14 @@
 class Enemy : Character
 {
-    LootTable lootTable;
+    Item? itemReward;
 
     public Enemy(int enemyLevel)
     {
         RunOnConstruction();
-        lootTable = new LootTable(enemyLevel);
+        itemReward = ILoot.GenerateLoot(enemyLevel);
         maxHealth = 10 + (enemyLevel - 1) * 10;
         health = maxHealth;
         damage = 2 + (enemyLevel - 1) * 3;
-
         defense = (enemyLevel - 5) * 2;
         if (defense < 0) defense = 0;
 
@@ -18,6 +17,18 @@ class Enemy : Character
     }
     public override void OnDeath(Character opposingCharacter)
     {
-        Console.WriteLine("Enemy is die :)");
+        try
+        {
+            Player player = (Player)opposingCharacter;
+
+            if(itemReward is not null)
+            {
+                player.Inventory.AddItem(itemReward);
+            }
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("Unable to cast opposing character\n" + e.Message);
+        }
     }
 }
