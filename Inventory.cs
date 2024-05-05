@@ -1,8 +1,5 @@
-using System.IO.Compression;
 using System.Numerics;
-using System.Reflection.Metadata;
 using Raylib_cs;
-using Slutprojekt;
 
 class Inventory
 {
@@ -17,11 +14,12 @@ class Inventory
         public const int WIDTH = Constants.SCREEN_SIZE.X - OFFSET.X - 50;
         public const int HEIGHT = Constants.SCREEN_SIZE.Y - OFFSET.Y - 200;
     }
+
+    private readonly Player parentPlayer;
     private (Item? item, (int x, int y) position, int? listIndex) heldItem;
     private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor(INVENTORY_SIZE.WIDTH / (float)ITEM_SIZE);
     private static readonly int MAX_ITEM_COUNT = NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD;
     private static readonly Rectangle[] INVENTORY_ITEM_TILES = CalculateItemTiles();
-
     private static readonly Texture2D deleteItemTexture = Raylib.LoadTexture("Assets/Delete.png");
     private static readonly int textureOffset = (ITEM_SIZE - deleteItemTexture.Height) / 2;
     private readonly Item[] equippedItems = new Item[3];
@@ -38,9 +36,10 @@ class Inventory
     /// <summary>
     /// Constructor
     /// </summary>
-    public Inventory()
+    public Inventory(Player parentPlayer)
     {
         equippedItemTiles = CalculateEquippedItemTiles();
+        this.parentPlayer = parentPlayer;
 
         deleteItemTile = new(
             equippedItemTiles[^1].X + ITEM_SIZE * 1.5f,
@@ -48,6 +47,8 @@ class Inventory
             ITEM_SIZE,
             ITEM_SIZE
         );
+
+        GiveInitialItems();
     }
     public void DrawInformation()
     {
@@ -133,6 +134,7 @@ class Inventory
                     items.RemoveAt((int)heldItem.listIndex);
                     heldItem.item = null;
                     heldItem.listIndex = null;
+                    CalculateEquippedItemStats();
                     return;
                 }
             }
@@ -154,7 +156,6 @@ class Inventory
             return;
         }
     }
-
     public void GiveInitialItems()
     {
         for (int i = 0; i < equippedItems.Length; i++)
@@ -169,6 +170,24 @@ class Inventory
                 equippedItems[i] = item;
             }
         }
+
+        CalculateEquippedItemStats();
+    }
+    
+    /// <summary>
+    /// Calculates the total stats of all equipped items, then feeds it to the player
+    /// </summary>
+    public void CalculateEquippedItemStats()
+    {
+        int[] totalStats = new int[4];
+        foreach(Item item in equippedItems)
+        {
+            for (int i = 0; i < totalStats.Length; i++)
+            {
+                totalStats[i] += item.stats[i];
+            }
+        }
+        parentPlayer.UpdateStats(totalStats);
     }
 
     private void DrawEquippedItems()

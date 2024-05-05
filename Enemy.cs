@@ -1,6 +1,6 @@
 class Enemy : Character
 {
-    Item? itemReward;
+    readonly Item? itemReward;
 
     public Enemy(int enemyLevel)
     {

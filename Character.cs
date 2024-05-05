@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using Raylib_cs;
 using Slutprojekt;
 
@@ -9,7 +8,6 @@ abstract class Character
     protected string characterName;
     (int x, int y) textOffset;
     protected float attackSpeed, attackCooldown;
-
     private const int HEALTHBAR_LENGTH = 300;
     public void PerformActions(Character opposingCharacter)
     {
@@ -32,10 +30,7 @@ abstract class Character
         new FloatingText((textOffset.x + 200, textOffset.y), (textOffset.x + 200, textOffset.y - 150), 3, "-" + damage.ToString(), Color.Red);
     }
 
-    public bool IsDead()
-    {
-        return health <= 0;
-    }
+    public bool IsDead() => health <= 0;
 
 
     public void BeginRecovering(float recoveryPeriod)
@@ -53,7 +48,11 @@ abstract class Character
         {
             health += 1;
             healthRecoveryBuffer -= 1;
-            if (health > maxHealth) health = maxHealth;
+        }
+
+        if(health >= maxHealth)
+        {
+            health = maxHealth;
         }
     }
 

@@ -1,4 +1,3 @@
-
 class Player : Character
 {
     public Inventory Inventory { get; }
@@ -11,11 +10,22 @@ class Player : Character
         this.defense = defense;
         this.attackSpeed = attackSpeed;
         attackCooldown = 0;
-        Inventory = new();
+        Inventory = new(this);
     }
 
     public override void OnDeath(Character opposingCharacter)
     {
-        Console.WriteLine("Player is die :(");
+
+    }
+
+    /// <summary>
+    /// Update player stats
+    /// </summary>
+    public void UpdateStats(int[] stats)
+    {
+        damage = stats[0] + 4;
+        maxHealth = stats[1] + 20;
+        attackSpeed = 1 - (stats[2] / 60);
+        defense = stats[3];
     }
 }

@@ -5,17 +5,17 @@ using Slutprojekt;
 class CombatHandler
 {
     //TODO the player should be given instructions on how to play
-    //TODO items should have an effect
-    //TODO ability to move between stages
-    //TODO enemies drop items based on their loot table
-    //TODO move "Player Is Recovering" text somewhere else, make it smaller and don't specify who is recovering
-    //TODO add a visual indicator for attack cooldowns
-    int stage = 1;
-    Player player;
-    Enemy enemy;
+    //TODO enemies should drop items based on their loot table
+    private int currentStage = 1;
+    private int unlockedStage = 1;
+    private Player player;
+    private Enemy enemy;
     const float recoveryPeriod = 2;
     public float recoveryRemaining = 0;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public CombatHandler(Player player, Enemy enemy)
     {
         this.player = player;
@@ -24,13 +24,19 @@ class CombatHandler
 
     public void Start()
     {
-        player.Inventory.GiveInitialItems();
+        //player.Inventory.GiveInitialItems();
     }
+
+    /// <summary>
+    /// Logic to perform every update
+    /// </summary>
     public void NextStep()
     {
         FloatingText.UpdateAllInstances();
         DrawInformation();
         player.Inventory.DrawInformation();
+
+        HandleMoveStage();
 
         if(recoveryRemaining > 0)
         {
@@ -42,6 +48,9 @@ class CombatHandler
         }
     }
 
+    /// <summary>
+    /// Logic to perform during combat
+    /// </summary>
     private void WhileCombat()
     {
         enemy.PerformActions(player);
@@ -49,9 +58,8 @@ class CombatHandler
         if(player.IsDead())
         {
             player.OnDeath(enemy);
-            recoveryRemaining = recoveryPeriod;
-            player.BeginRecovering(recoveryPeriod);
-            enemy.BeginRecovering(recoveryPeriod);
+            BeginRecovery();
+            return;
         }
 
         player.PerformActions(enemy);
@@ -59,19 +67,35 @@ class CombatHandler
         enemy.IsDead();
         if(enemy.IsDead())
         {
+            if(currentStage == unlockedStage)
+            {
+                unlockedStage++;
+            }
+
             enemy.OnDeath(player);
-            recoveryRemaining = recoveryPeriod;
-            player.BeginRecovering(recoveryPeriod);
-            enemy.BeginRecovering(recoveryPeriod);
+            BeginRecovery();
+            return;
         }
+    }
+
+    /// <summary>
+    /// Initiate a recovery period, heals all characters to full health over the course of a set amount of time
+    /// At the end of the recovery period, a new enemy will be instantiated
+    /// </summary>
+    private void BeginRecovery()
+    {
+        recoveryRemaining = recoveryPeriod;
+        player.BeginRecovering(recoveryPeriod);
+        enemy.BeginRecovering(recoveryPeriod);
     }
 
     private void WhileRecovering()
     {
         IUtils.DrawCenteredText(
-            "Player is recovering...",
-            Constants.SCREEN_SIZE.X / 2, 100,
-            Constants.DEFAULT_FONT_SIZE + 20,
+            "Recovering...",
+            Constants.SCREEN_SIZE.X / 2 - 200, 
+            100,
+            Constants.DEFAULT_FONT_SIZE,
             Color.Green
         );
 
@@ -84,13 +108,35 @@ class CombatHandler
         recoveryRemaining -= Raylib.GetFrameTime();
         if (recoveryRemaining <= 0)
         {
-            enemy = new Enemy(stage);
+            enemy = new Enemy(currentStage);
         }
         return;
     }
 
     private void DrawInformation()
     {
-        Raylib.DrawText("Stage: " + stage, 50, 50, Constants.DEFAULT_FONT_SIZE - 10, Color.White);
+        //Display current stage number
+        Raylib.DrawText("Current Stage: " + currentStage, 50, 20, Constants.DEFAULT_FONT_SIZE - 10, Color.White);
+
+        //Display unlocked stage number
+        Raylib.DrawText("Highest Unlocked Stage: " + unlockedStage, 50, 60, Constants.DEFAULT_FONT_SIZE - 10, Color.Gold);
+    }
+
+
+    /// <summary>
+    /// Check if the player made any inputs to move to a different stage
+    /// </summary>
+    private void HandleMoveStage()
+    {
+        if(Raylib.IsKeyPressed(KeyboardKey.Left) && currentStage > 1)
+        {
+            BeginRecovery();
+            currentStage--;
+        }
+        else if(Raylib.IsKeyPressed(KeyboardKey.Right) && currentStage < unlockedStage)
+        {
+            BeginRecovery();
+            currentStage++;
+        }
     }
 }

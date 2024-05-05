@@ -23,27 +23,26 @@ public abstract class Item
 
     public int Damage
     {
-        get { return stats[0]; }
-        set { stats[0] = value; }
+        get => stats[0];
+        set => stats[0] = value;
     }
     public int Health
     {
-        get { return stats[1]; }
-        set { stats[1] = value; }
+        get => stats[1];
+        set => stats[1] = value;
     }
     public int AttackSpeed
     {
-        get { return stats[2]; }
-        set { stats[2] = value; }
+        get => stats[2];
+        set => stats[2] = value;
     }
     public int Defense
     {
-        get { return stats[3]; }
-        set { stats[3] = value; }
+        get => stats[3];
+        set => stats[3] = value;
     }
 
-    public Item(
-        int rarity)
+    public Item(int rarity)
     {
         Damage = 0;
         Health = 0;
