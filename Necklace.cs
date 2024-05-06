@@ -1,3 +1,7 @@
+/// <summary>
+/// The necklace type increases damage and health
+/// </summary>
+
 public class Necklace : Item
 {
     public Necklace(int rarity) : base(rarity)

@@ -1,7 +1,12 @@
+/// <summary>
+/// The Item type contains statistical increases scaling with rarity
+/// </summary>
+
 using Raylib_cs;
 
 public abstract class Item
 {
+    //Textures to represent each item type
     public static readonly Texture2D[] itemTextures = new Texture2D[4]
     {
         Raylib.LoadTexture("Assets/Armor.png"),
@@ -16,7 +21,7 @@ public abstract class Item
         Weapon,
         Unknown
     }
-    public Texture2D texture;
+    public Texture2D texture; //The texture of this item
     public int rarity;
 
     public int[] stats = new int[4];
@@ -31,7 +36,7 @@ public abstract class Item
         get => stats[1];
         set => stats[1] = value;
     }
-    public int AttackSpeed
+    public int AttackSpeed //Attackspeed is given in attack per minute
     {
         get => stats[2];
         set => stats[2] = value;
@@ -42,6 +47,11 @@ public abstract class Item
         set => stats[3] = value;
     }
 
+    /// <summary>
+    /// Constructor
+    /// Each item starts with zero stats
+    /// each item type individually decides the stats of the item in their corresponding constructor
+    /// </summary>
     public Item(int rarity)
     {
         Damage = 0;

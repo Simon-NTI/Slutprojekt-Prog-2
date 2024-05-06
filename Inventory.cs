@@ -1,8 +1,15 @@
+/// <summary>
+/// The inventory class contains logic to handle items
+/// </summary>
+
 using System.Numerics;
 using Raylib_cs;
 
 class Inventory
 {
+    /// <summary>
+    /// Defines the specifications of the dimensions of the inventory
+    /// </summary>
     class INVENTORY_SIZE
     {
         public class OFFSET
@@ -15,7 +22,7 @@ class Inventory
         public const int HEIGHT = Constants.SCREEN_SIZE.Y - OFFSET.Y - 200;
     }
 
-    private readonly Player parentPlayer;
+    private readonly Player parentPlayer; // The player who owns this inventory
     private (Item? item, (int x, int y) position, int? listIndex) heldItem;
     private static readonly int NEW_ROW_THRESHOLD = (int)Math.Floor(INVENTORY_SIZE.WIDTH / (float)ITEM_SIZE);
     private static readonly int MAX_ITEM_COUNT = NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD;
@@ -30,7 +37,6 @@ class Inventory
     private readonly Rectangle[] equippedItemTiles;
     private const int ITEM_SIZE = 100;
     public readonly List<Item> items = new();
-
     private readonly Rectangle deleteItemTile;
 
     /// <summary>
@@ -53,10 +59,12 @@ class Inventory
     public void DrawInformation()
     {
         CheckGrab();
-        DrawEquippedItems();
         DrawInventory();
     }
 
+    /// <summary>
+    /// Calculate where each equipped item is positioned
+    /// </summary>
     private Rectangle[] CalculateEquippedItemTiles()
     {
         Rectangle[] itemPositions = new Rectangle[equippedItems.Length];
@@ -71,6 +79,10 @@ class Inventory
         }
         return itemPositions;
     }
+
+    /// <summary>
+    /// Calculate where each inventory item is displayed based on inventory dimensions
+    /// </summary>
     private static Rectangle[] CalculateItemTiles()
     {
         Rectangle[] itemPositions = new Rectangle[NEW_ROW_THRESHOLD * NEW_ROW_THRESHOLD];
@@ -87,6 +99,10 @@ class Inventory
         return itemPositions;
     }
 
+    /// <summary>
+    /// Perform logic for grabbing items
+    /// The player can drag and drop items to perform various actions
+    /// </summary>
     private void CheckGrab()
     {
         //Check if the player has pressed left mouse on an item
@@ -156,6 +172,10 @@ class Inventory
             return;
         }
     }
+
+    /// <summary>
+    /// Gives and equips an item for each equippable item slot the player has
+    /// </summary>
     public void GiveInitialItems()
     {
         for (int i = 0; i < equippedItems.Length; i++)
@@ -190,11 +210,6 @@ class Inventory
         parentPlayer.UpdateStats(totalStats);
     }
 
-    private void DrawEquippedItems()
-    {
-
-    }
-
     public void AddItem(Item item)
     {
         if(items.Count >= MAX_ITEM_COUNT)
@@ -207,6 +222,8 @@ class Inventory
             return;
         }
     }
+
+    
     private void DrawInventory()
     {
         //Inventory background

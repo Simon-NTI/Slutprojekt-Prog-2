@@ -1,3 +1,7 @@
+/// <summary>
+/// Contains sets of constant values accessible everywhere
+/// </summary>
+
 public abstract class Constants
 {
     public const int DEFAULT_FONT_SIZE = 45;

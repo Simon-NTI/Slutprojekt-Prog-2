@@ -1,6 +1,8 @@
-using System.Numerics;
+/// <summary>
+/// This interface contains methods to perform commonly used actions
+/// </summary>
+
 using Raylib_cs;
-using Slutprojekt;
 
 public interface IUtils
 {

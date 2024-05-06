@@ -1,9 +1,8 @@
 class Player : Character
 {
     public Inventory Inventory { get; }
-    public Player(int maxHealth, int damage, int defense, float attackSpeed)
+    public Player(int maxHealth, int damage, int defense, float attackSpeed) : base()
     {
-        RunOnConstruction();
         this.maxHealth = maxHealth;
         health = maxHealth;
         this.damage = damage;

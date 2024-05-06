@@ -1,10 +1,13 @@
 class Enemy : Character
 {
-    readonly Item? itemReward;
+    public readonly Item? itemReward;
 
-    public Enemy(int enemyLevel)
+    /// <summary>
+    /// Constructor for the enemy type
+    /// The stats of an enemy is decided based upon its level
+    /// </summary>
+    public Enemy(int enemyLevel) : base()
     {
-        RunOnConstruction();
         itemReward = ILoot.GenerateLoot(enemyLevel);
         maxHealth = 10 + (enemyLevel - 1) * 10;
         health = maxHealth;
@@ -15,6 +18,10 @@ class Enemy : Character
         attackSpeed = 3f - (float)(Math.Floor((enemyLevel - 1) * 0.2d) * 0.1d);
         if (attackSpeed < 0) attackSpeed = 0.1f;
     }
+
+    /// <summary>
+    /// An enemy rewards the opposing character with an item uppon death
+    /// </summary>
     public override void OnDeath(Character opposingCharacter)
     {
         try

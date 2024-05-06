@@ -1,6 +1,8 @@
-using System.Diagnostics;
+/// <summary>
+/// A combat handler handles combat between two characters
+/// </summary>
+
 using Raylib_cs;
-using Slutprojekt;
 
 class CombatHandler
 {
@@ -20,11 +22,6 @@ class CombatHandler
     {
         this.player = player;
         this.enemy = enemy;
-    }
-
-    public void Start()
-    {
-        //player.Inventory.GiveInitialItems();
     }
 
     /// <summary>
@@ -89,6 +86,9 @@ class CombatHandler
         enemy.BeginRecovering(recoveryPeriod);
     }
 
+    /// <summary>
+    /// Logic to perform while recovering
+    /// </summary>
     private void WhileRecovering()
     {
         IUtils.DrawCenteredText(
@@ -113,6 +113,9 @@ class CombatHandler
         return;
     }
 
+    /// <summary>
+    /// Display certain values that are important to the
+    /// </summary>
     private void DrawInformation()
     {
         //Display current stage number

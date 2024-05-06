@@ -1,4 +1,7 @@
-﻿using System.Numerics;
+﻿/// <summary>
+/// Initiates an instance of a combat handler and produces a raylib window
+/// </summary>
+
 using Raylib_cs;
 
 namespace Slutprojekt;
@@ -12,8 +15,6 @@ class Program
             new(20, 4, 0, 1),
             new(1)
         );
-
-        combatHandler.Start();
 
         Raylib.SetTargetFPS(60);
         

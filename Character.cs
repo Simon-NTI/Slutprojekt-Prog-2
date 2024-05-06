@@ -1,6 +1,8 @@
-using Raylib_cs;
-using Slutprojekt;
+/// <summary>
+/// A character is a type which contains logic which allos them to perform combat against other characters
+/// </summary>
 
+using Raylib_cs;
 abstract class Character
 {
     protected int maxHealth, health, damage, defense;
@@ -9,6 +11,18 @@ abstract class Character
     (int x, int y) textOffset;
     protected float attackSpeed, attackCooldown;
     private const int HEALTHBAR_LENGTH = 300;
+    
+    /// <summary>
+    /// A common constructor for all characters
+    /// </summary>
+    public Character()
+    {
+        RunOnConstruction();
+    }    
+    
+    /// <summary>
+    /// Logic to perform each step
+    /// </summary>
     public void PerformActions(Character opposingCharacter)
     {
         if(health <= 0)
@@ -24,15 +38,33 @@ abstract class Character
             opposingCharacter.RecieveDamage(damage);
         }
     }
+
+    /// <summary>
+    /// Apply the given damage value to the character
+    /// </summary>
     public void RecieveDamage(int damage)
     {
         health -= damage;
-        new FloatingText((textOffset.x + 200, textOffset.y), (textOffset.x + 200, textOffset.y - 150), 3, "-" + damage.ToString(), Color.Red);
+
+        Random generator = new();
+        new FloatingText(
+            (textOffset.x + 250, textOffset.y - 20), 
+            (textOffset.x + 250 + (30 - generator.Next(60)), textOffset.y + 150  + (30 - generator.Next(60))), 
+            3, 
+            "-" + damage.ToString(), 
+            Color.Red);
     }
 
+    /// <summary>
+    /// If character health is less than 0, return true
+    /// </summary>
     public bool IsDead() => health <= 0;
 
-
+    /// <summary>
+    /// Calculates how much health the character is missing
+    /// then calculate how much health the player should recieve every second to fully replenish their health
+    /// before the end of the recovery period 
+    /// </summary>
     public void BeginRecovering(float recoveryPeriod)
     {
         healthRecoveryBuffer = 0;
@@ -40,6 +72,10 @@ abstract class Character
         health += 1;
         attackCooldown = 0;
     }
+
+    /// <summary>
+    /// Heal the character at set intervals
+    /// </summary>
     public void Recover()
     {
         healthRecoveryBuffer += healthRecoveryPerSecond;
@@ -56,6 +92,9 @@ abstract class Character
         }
     }
 
+    /// <summary>
+    /// Logic to perform when a character is constructed
+    /// </summary>
     protected void RunOnConstruction()
     {
         characterName = "- " + GetType().ToString() + " -";
@@ -65,6 +104,9 @@ abstract class Character
         textOffset.y = GetType().ToString().Equals("Player") ? yOffset : 2 * yOffset + 200;
     }
 
+    /// <summary>
+    /// Display character related information
+    /// </summary>
     public void DrawInformation()
     {
         //Draw the name of the character
@@ -137,5 +179,8 @@ abstract class Character
         }
     }
 
+    /// <summary>
+    /// Logic to perform when the character dies
+    /// </summary>
     abstract public void OnDeath(Character opposingCharacter);
 }
